@@ -1,0 +1,47 @@
+/* Add Google Font 'Comfortaa' or any fun, rounded font */
+body {
+    background-color: #fdf2e9;
+    color: #4a2c2a;
+    font-family: 'Comfortaa', cursive;
+    text-align: center;
+    overflow: hidden; /* Important for full-screen modes */
+}
+
+h1 {
+    font-size: 4rem;
+    margin-bottom: 0;
+    color: #e67e22;
+}
+
+nav button {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    margin: 10px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+nav button:hover {
+    transform: scale(1.1);
+    background-color: #d35400;
+}
+
+.mode {
+    display: none; /* Hide all modes by default */
+    width: 100vw;
+    height: 80vh;
+    position: absolute;
+    top: 10vh;
+    left: 0;
+}
+
+.active-mode {
+    display: flex; /* Show the active mode */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
