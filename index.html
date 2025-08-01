@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chonky Neko - The Most Useless Cat Ever</title>
+    <!-- Importing a fun, round font for the website's theme -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tone.js library for reliable browser-based audio -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        /* General styling and body layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        /* Styling for mode selection buttons */
+        .mode-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            padding: 15px 25px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Main content area for all modes */
+        .content-container {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 20px;
+            min-height: 550px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Styles for the chase game mode */
+        .game-area {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        /* Styles for the cat character (used in multiple modes) */
+        .cat, .feeding-cat, .sanyasi-cat {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: #ff9800; /* Cat's main body color */
+            border-radius: 50% 50% 45% 45%;
+            transition: all 0.2s linear;
+            z-index: 10;
+        }
+
+        /* Pure CSS ears for the cat */
+        .cat::before, .cat::after, .feeding-cat::before, .feeding-cat::after, .sanyasi-cat::before, .sanyasi-cat::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 30px solid #ff9800;
+            z-index: -1;
+        }
+        .cat::before, .feeding-cat::before, .sanyasi-cat::before { left: 10px; transform: rotate(-20deg); }
+        .cat::after, .feeding-cat::after, .sanyasi-cat::after { right: 10px; transform: rotate(20deg); }
+
+        .cat-face {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 40px;
+            height: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cat-eyes { font-size: 20px; transition: transform 0.2s ease; }
+        .cat-mouth { font-size: 15px; }
+
+        /* Mouse character using an emoji */
+        .mouse {
+            position: absolute;
+            font-size: 30px;
+            transition: transform 0.1s ease-out;
+            cursor: none;
+            user-select: none;
+            z-index: 5;
+        }
+        
+        .score {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.2em;
+            z-index: 20;
+        }
+        
+        .instructions {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            z-index: 20;
+        }
+
+        /* Hiding/showing content based on active mode */
+        .mode-content {
+            display: none;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+
+        .sanyasi-mode, .rate-mode, .horoscope-mode, .translator-mode {
+            padding: 40px;
+            color: #333;
+        }
+
+        /* Sanyasi cat with floating animation */
+        .sanyasi-cat {
+            margin: 0 auto 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .sanyasi-cat .cat-face { top: 40px; left: 30px; }
+
+        .question-box {
+            background: rgba(255,255,255,0.8);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 1.3em;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .option-btn {
+            padding: 12px 20px;
+            background: #4caf50;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover { background: #45a049; transform: scale(1.05); }
+
+        .upload-area {
+            border: 3px dashed #ccc;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover { border-color: #ff9800; background: rgba(255,152,0,0.1); }
+
+        .uploaded-image { max-width: 90%; max-height: 300px; border-radius: 15px; margin: 20px 0; }
+
+        .rating-result {
+            font-size: 2em;
+            padding: 20px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 15px;
+            min-height: 100px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        /* Paw-roscope styles */
+        .crystal-ball {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #e3f2fd 0%, #1976d2 100%);
+            border-radius: 50%;
+            margin: 30px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: mystical 3s ease-in-out infinite;
+        }
+
+        .crystal-ball:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(25,118,210,0.5); }
+
+        .crystal-glow { font-size: 3em; animation: sparkle 2s ease-in-out infinite; }
+
+        .horoscope-result {
+            background: rgba(255,255,255,0.9);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .zodiac-sign { font-size: 2.5em; margin-bottom: 20px; font-weight: bold; color: #1976d2; }
+        .horoscope-text { font-size: 1.3em; line-height: 1.6; }
+
+        /* Translator styles */
+        .translator-section { background: rgba(255,255,255,0.8); padding: 20px; margin: 20px 0; border-radius: 15px; }
+
+        .translator-section textarea { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 1.1em; margin: 10px 0; resize: vertical; }
+
+        .translation-result { background: #f0f8ff; padding: 15px; border-radius: 10px; margin: 10px 0; min-height: 50px; font-size: 1.2em; border-left: 4px solid #ff9800; }
+        
+        #recording-status {
+            background: #ff4444;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            animation: pulse 1s infinite;
+            display: none;
+        }
+
+        /* Feeding simulator styles */
+        .hunger-meter {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            width: 250px;
+            z-index: 20;
+        }
+
+        .hunger-bar-container { width: 100%; height: 20px; background: #ddd; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .hunger-bar { height: 100%; background: linear-gradient(90deg, #ff4444 0%, #ffaa00 50%, #44ff44 100%); width: 100%; transition: width 0.5s ease; animation: hungerPulse 1s ease-in-out infinite; }
+        .hunger-text { font-weight: bold; color: #d32f2f; text-align: center; }
+
+        .feeding-cat {
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: none;
+            width: 120px;
+            height: 120px;
+        }
+        .feeding-cat .cat-face { top: 40px; left: 40px; }
+
+        .food-bowl {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 30px;
+            background: #8bc34a;
+            border-radius: 0 0 40px 40px;
+            border: 3px solid #689f38;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .kibble-dispenser {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 20;
+        }
+
+        .kibble { font-size: 2em; cursor: grab; transition: transform 0.2s ease; user-select: none; }
+        .kibble:hover { transform: scale(1.2); }
+        .kibble:active { cursor: grabbing; }
+
+        .feeding-commentary {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-style: italic;
+            text-align: center;
+            max-width: 80%;
+            z-index: 20;
+        }
+
+        /* Keyframe animations */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes mystical {
+            0%, 100% { box-shadow: 0 0 20px rgba(25,118,210,0.3); }
+            50% { box-shadow: 0 0 40px rgba(25,118,210,0.6); }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+        }
+
+        @keyframes hungerPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes expandAndFloat {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(8); }
+            100% {
+                transform: translateX(-50%) scale(10) translateY(-200px);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🐱 CHONKY NEKO 🐱</h1>
+        <p>The most magnificently useless cat website ever created!</p>
+    </div>
+
+    <div class="mode-selector">
+        <button class="mode-btn" onclick="switchMode('chase')">🏃‍♂️ Cat & Mouse Chase</button>
+        <button class="mode-btn" onclick="switchMode('sage')">🧘‍♂️ Cat Sanyasi Mode</button>
+        <button class="mode-btn" onclick="switchMode('rate')">⭐ Picture Rater</button>
+        <button class="mode-btn" onclick="switchMode('horoscope')">🔮 Paw-roscope</button>
+        <button class="mode-btn" onclick="switchMode('translator')">🗣️ Cat Translator</button>
+        <button class="mode-btn" onclick="switchMode('feeding')">🍽️ Feed Chonky</button>
+    </div>
+
+    <div class="content-container">
+        <!-- Chase Mode -->
+        <div id="chase-mode" class="mode-content game-area">
+            <div class="instructions">Click anywhere to move the mouse! Chonky will chase it!</div>
+            <div class="score">Score: <span id="score">0</span></div>
+            <div class="cat" id="cat">
+                <div class="cat-face">
+                    <div class="cat-eyes" id="cat-eyes">👀</div>
+                    <div class="cat-mouth" id="cat-mouth">😸</div>
+                </div>
+            </div>
+            <div class="mouse" id="mouse">🐭</div>
+        </div>
+
+        <!-- Sage Mode -->
+        <div id="sage-mode" class="mode-content sanyasi-mode">
+            <div class="sanyasi-cat" id="sanyasi-cat">
+                <div class="cat-face">
+                    <div class="cat-eyes" id="sage-eyes">😼</div>
+                    <div class="cat-mouth" id="sage-mouth">😾</div>
+                </div>
+            </div>
+            <div class="question-box" id="question-display">
+                Welcome, human. I am Chonky Neko, the wise cat sanyasi. I shall ask you the most profound questions known to catkind...
+            </div>
+            <div class="options" id="sage-options">
+                <button class="option-btn" onclick="startSageMode()">Begin the wisdom!</button>
+            </div>
+        </div>
+
+        <!-- Rating Mode -->
+        <div id="rate-mode" class="mode-content rate-mode">
+            <div class="sanyasi-cat">
+                <div class="cat-face">
+                    <div class="cat-eyes" id="rate-eyes">🤔</div>
+                    <div class="cat-mouth" id="rate-mouth">😐</div>
+                </div>
+            </div>
+            <h2>Chonky's Picture Rating Service</h2>
+            <p>Upload a picture and I'll rate it with my superior feline judgment!</p>
+            <div class="upload-area" onclick="document.getElementById('image-upload').click()">
+                <p>📸 Click here to upload your picture!</p>
+                <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+            </div>
+            <div id="image-container"></div>
+            <div class="rating-result" id="rating-result"></div>
+        </div>
+
+        <!-- Horoscope Mode -->
+        <div id="horoscope-mode" class="mode-content horoscope-mode">
+            <div class="sanyasi-cat">
+                <div class="cat-face">
+                    <div class="cat-eyes" id="horoscope-eyes">🔮</div>
+                    <div class="cat-mouth" id="horoscope-mouth">🧐</div>
+                </div>
+            </div>
+            <h2>Chonky's Paw-roscope Reading</h2>
+            <p>Click the crystal ball to receive your cosmic cat wisdom!</p>
+            <div class="crystal-ball" onclick="generateHoroscope()">
+                <div class="crystal-glow">🔮✨</div>
+                <p>Click for your destiny!</p>
+            </div>
+            <div class="horoscope-result" id="horoscope-result">
+                <div class="zodiac-sign" id="zodiac-sign"></div>
+                <div class="horoscope-text" id="horoscope-text"></div>
+            </div>
+        </div>
+
+        <!-- Translator Mode -->
+        <div id="translator-mode" class="mode-content translator-mode">
+            <div class="sanyasi-cat">
+                <div class="cat-face">
+                    <div class="cat-eyes" id="translator-eyes">🗣️</div>
+                    <div class="cat-mouth" id="translator-mouth">🤨</div>
+                </div>
+            </div>
+            <h2>Universal Cat Translator</h2>
+            <div class="translator-section">
+                <h3>Human to Cat</h3>
+                <textarea id="human-input" placeholder="Type your human words here..." rows="3"></textarea>
+                <button class="option-btn" onclick="translateToMeow()">Translate to Meow</button>
+                <div class="translation-result" id="meow-result"></div>
+            </div>
+            <div class="translator-section">
+                <h3>Cat to Human (Advanced AI)</h3>
+                <textarea id="meow-input" placeholder="Type your meows here (meow meow meoooow)..." rows="3"></textarea>
+                <button class="option-btn" onclick="translateFromMeow()">Decode Cat Wisdom</button>
+                <button class="option-btn" onclick="startRecording()" id="record-btn">🎤 Record Meows</button>
+                <div class="translation-result" id="wisdom-result"></div>
+                <div id="recording-status">Recording... Say your meows!</div>
+            </div>
+        </div>
+
+        <!-- Feeding Mode -->
+        <div id="feeding-mode" class="mode-content game-area">
+            <div class="hunger-meter">
+                <div class="hunger-label">Chonky's Hunger Level</div>
+                <div class="hunger-bar-container">
+                    <div class="hunger-bar" id="hunger-bar"></div>
+                </div>
+                <div class="hunger-text" id="hunger-text">STARVING! (hasn't eaten in 3 seconds)</div>
+            </div>
+            <div class="feeding-cat" id="feeding-cat">
+                <div class="cat-face">
+                    <div class="cat-eyes" id="feeding-eyes">😿</div>
+                    <div class="cat-mouth" id="feeding-mouth">😾</div>
+                </div>
+            </div>
+            <div class="food-bowl" id="food-bowl"></div>
+            <div class="kibble-dispenser">
+                <div class="kibble" draggable="true">🟤</div>
+                <div class="kibble" draggable="true">🟤</div>
+                <div class="kibble" draggable="true">🟤</div>
+                <div class="kibble" draggable="true">🟤</div>
+                <div class="kibble" draggable="true">🟤</div>
+            </div>
+            <div class="feeding-commentary" id="feeding-commentary">
+                "I'm wasting away! This is neglect! Call the authorities!"
+            </div>
+        </div>
+    </div>
+    
+    <!-- Audio elements are now removed to prevent errors -->
+
+    <script>
+        // Global variables for game state
+        let currentMode = 'chase';
+        let score = 0;
+        let catPosition = { x: 100, y: 100 };
+        let mousePosition = { x: 400, y: 200 };
+        let chaseInterval;
+        let currentQuestion = 0;
+        let hungerLevel = 100;
+        let hungerInterval;
+        let feedingCount = 0;
+        let isRecording = false;
+
+        // Create a simple synth instance using Tone.js
+        const synth = new Tone.Synth().toDestination();
+
+        // Data for all the interactive modes
+        const catZodiacSigns = [
+            { name: "Tuna", emoji: "🐟", element: "Water" },
+            { name: "Cardboard Box", emoji: "📦", element: "Earth" },
+            { name: "Laser Pointer", emoji: "🔴", element: "Fire" },
+            { name: "Catnip", emoji: "🌿", element: "Earth" },
+            { name: "Yarn Ball", emoji: "🧶", element: "Air" },
+            { name: "Sunny Window", emoji: "🪟", element: "Light" },
+            { name: "Midnight Zoomies", emoji: "🌙", element: "Chaos" },
+            { name: "Keyboard", emoji: "⌨️", element: "Technology" },
+            { name: "Paper Bag", emoji: "🛍️", element: "Mystery" },
+            { name: "Fish Tank", emoji: "🐠", element: "Temptation" },
+            { name: "Treats Jar", emoji: "🍪", element: "Desire" },
+            { name: "Litter Box", emoji: "📦", element: "Privacy" }
+        ];
+
+        const horoscopePredictions = [
+            "Today you will pet a cat... or a cat will judge you silently.",
+            "A mysterious hairball will appear in your future.",
+            "You will experience the ancient cat art of 3 AM zoomies.",
+            "Beware of empty food bowls - they bring great misfortune.",
+            "Your furniture will be blessed by cat scratches.",
+            "A cardboard box will bring you more joy than expensive gifts.",
+            "You will understand the deep meaning of a cat's slow blink.",
+            "Expect to find a cat in the most inconvenient place possible.",
+            "Your keyboard will become a sacred cat altar.",
+            "A red dot will lead you on an endless chase.",
+            "You will question who really owns whom in your household.",
+            "The ancient cat wisdom will be revealed through loud 4 AM meowing.",
+            "A sunny spot will call to your inner feline.",
+            "You will discover that all boxes are actually cat traps.",
+            "Your lap will become property of the local cat government."
+        ];
+
+        const sassyCommentary = [
+            "Finally! I was about to file a complaint with the Cat Rights Commission!",
+            "This is acceptable... for now. But I'll be watching you.",
+            "Too slow, human! My ancestors are disappointed.",
+            "Perfect! You may continue existing in my presence.",
+            "Adequate. You're learning the sacred art of cat servitude.",
+            "I suppose this will do. Don't let it go to your head.",
+            "Hmph. I've had better service at the animal shelter.",
+            "Excellent! You show promise as a future cat butler.",
+            "This pleases me. You may receive one (1) purr as payment.",
+            "Not bad! Though you could use more enthusiasm."
+        ];
+
+        const sageQuestions = [
+            {
+                question: "Human, why do you disturb my meditation to ask me things?",
+                options: ["Because I'm bored", "I seek wisdom", "You're cute", "I don't know"],
+                responses: ["Ah yes, boredom. The eternal human condition. 😾", "Wisdom? From a cat? How presumptuous! 😸", "Flattery will get you... actually, continue. 😻", "Honesty! I respect that, foolish human. 🙄"],
+                faceResponses: ['😾', '😹', '😻', '�']
+            },
+            {
+                question: "If a cat knocks something off a table and no human sees it, did it really happen?",
+                options: ["Yes, of course", "No, it didn't", "The cat knows", "What table?"],
+                responses: ["Wrong! Everything cats do is performance art! 🎭", "Exactly! Reality is just human perception anyway. 😏", "Finally, someone who understands cat philosophy! 😺", "This human is broken. Have you tried turning it off and on again? 🤖"],
+                faceResponses: ['😼', '😏', '😸', '🤨']
+            },
+            {
+                question: "Why do humans work all day when they could just sleep 16 hours like civilized beings?",
+                options: ["We need money", "We're not cats", "Society demands it", "Good point"],
+                responses: ["Money? Just knock things over until humans give you food! 💰", "Excuses! You have opposable thumbs, use them for napping! 😴", "Society is overrated. Join the cat revolution! ✊", "See? This human gets it. You may live. 👑"],
+                faceResponses: ['😾', '😴', '✊', '👑']
+            },
+            {
+                question: "What is the meaning of life, according to cat philosophy?",
+                options: ["To be happy", "To catch mice", "To nap and eat", "To knock things over"],
+                responses: ["Too simple! Life is about judging humans silently. 😒", "Amateur! Any cat can catch mice. True art is ignoring them. 🎨", "Basic cat wisdom! You're learning, grasshopper. 🌱", "ENLIGHTENMENT! You understand the sacred art of chaos! 🌟"],
+                faceResponses: ['😒', '🎨', '😸', '✨']
+            },
+            {
+                question: "Why do cats purr?",
+                options: ["They're happy", "It's healing", "To manipulate humans", "Nobody knows"],
+                responses: ["Happiness is for dogs. We purr to charge our laser eyes. ⚡", "Healing? Yes, we heal our own superiority complex. 💊", "CORRECT! Purring is our mind control device! 🧠", "Finally! The mystery must remain to preserve our power! 🔮"],
+                faceResponses: ['⚡', '💊', '🧠', '🔮']
+            }
+        ];
+
+        // Function to switch between the different modes
+        function switchMode(mode) {
+            // Hide all content sections first
+            document.querySelectorAll('.mode-content').forEach(el => el.style.display = 'none');
+            
+            // Clear any running intervals from previous modes
+            if (chaseInterval) clearInterval(chaseInterval);
+            if (hungerInterval) clearInterval(hungerInterval);
+            
+            // Show the selected mode and start its unique functions
+            const modeElement = document.getElementById(mode + '-mode');
+            if (modeElement) {
+                modeElement.style.display = 'flex';
+                if (mode === 'chase') startChaseMode();
+                else if (mode === 'sage') resetSageMode();
+                else if (mode === 'feeding') startFeedingMode();
+            }
+            
+            currentMode = mode;
+        }
+
+        // --- Chase Mode Functions ---
+        function startChaseMode() {
+            const gameArea = document.getElementById('chase-mode');
+            score = 0;
+            document.getElementById('score').textContent = score;
+            catPosition = { x: 100, y: 100 };
+            mousePosition = { x: 400, y: 200 };
+            updateCatPosition();
+            updateMousePosition();
+
+            gameArea.onclick = function(e) {
+                const rect = gameArea.getBoundingClientRect();
+                mousePosition.x = e.clientX - rect.left - 15;
+                mousePosition.y = e.clientY - rect.top - 15;
+                updateMousePosition();
+                
+                if (chaseInterval) clearInterval(chaseInterval);
+                chaseInterval = setInterval(chaseMouse, 50);
+            };
+        }
+
+        function updateCatPosition() {
+            const cat = document.getElementById('cat');
+            cat.style.left = catPosition.x + 'px';
+            cat.style.top = catPosition.y + 'px';
+        }
+
+        function updateMousePosition() {
+            const mouse = document.getElementById('mouse');
+            mouse.style.left = mousePosition.x + 'px';
+            mouse.style.top = mousePosition.y + 'px';
+        }
+
+        function chaseMouse() {
+            const catEyes = document.getElementById('cat-eyes');
+            const catMouth = document.getElementById('cat-mouth');
+            
+            catEyes.textContent = '👀';
+            catMouth.textContent = '😾';
+            
+            const dx = mousePosition.x - catPosition.x;
+            const dy = mousePosition.y - catPosition.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 50) {
+                score++;
+                document.getElementById('score').textContent = score;
+                catMouth.textContent = '😋';
+                catEyes.textContent = '😸';
+                
+                // Move mouse to a new random position
+                const gameArea = document.getElementById('chase-mode');
+                mousePosition.x = Math.random() * (gameArea.clientWidth - 50);
+                mousePosition.y = Math.random() * (gameArea.clientHeight - 50);
+                updateMousePosition();
+                
+                clearInterval(chaseInterval);
+                setTimeout(() => {
+                    catEyes.textContent = '👀';
+                    catMouth.textContent = '😼';
+                }, 1000);
+            } else {
+                const speed = 5;
+                catPosition.x += (dx / distance) * speed;
+                catPosition.y += (dy / distance) * speed;
+                updateCatPosition();
+            }
+        }
+        
+        // --- Sage Mode Functions ---
+        function resetSageMode() {
+            currentQuestion = 0;
+            document.getElementById('question-display').textContent = "Welcome, human. I am Chonky Neko, the wise cat sanyasi. I shall ask you the most profound questions known to catkind...";
+            document.getElementById('sage-options').innerHTML = '<button class="option-btn" onclick="startSageMode()">Begin the wisdom!</button>';
+            document.getElementById('sage-eyes').textContent = '😼';
+            document.getElementById('sage-mouth').textContent = '😾';
+        }
+
+        function startSageMode() {
+            showNextQuestion();
+        }
+
+        function showNextQuestion() {
+            if (currentQuestion >= sageQuestions.length) {
+                document.getElementById('question-display').textContent = "You have completed your training, young grasshopper. But you still know nothing about cats! 😹";
+                document.getElementById('sage-options').innerHTML = '<button class="option-btn" onclick="resetSageMode()">Start over, human!</button>';
+                document.getElementById('sage-eyes').textContent = '😹';
+                document.getElementById('sage-mouth').textContent = '😸';
+                return;
+            }
+
+            const question = sageQuestions[currentQuestion];
+            document.getElementById('question-display').textContent = question.question;
+            
+            const optionsHTML = question.options.map((option, index) => 
+                `<button class="option-btn" onclick="answerQuestion(${index})">${option}</button>`
+            ).join('');
+            
+            document.getElementById('sage-options').innerHTML = optionsHTML;
+            document.getElementById('sage-eyes').textContent = '🤔';
+            document.getElementById('sage-mouth').textContent = '😐';
+        }
+
+        function answerQuestion(answerIndex) {
+            const question = sageQuestions[currentQuestion];
+            const response = question.responses[answerIndex];
+            
+            document.getElementById('question-display').textContent = response;
+            document.getElementById('sage-options').innerHTML = '<button class="option-btn" onclick="nextQuestion()">Next profound question!</button>';
+            
+            document.getElementById('sage-eyes').textContent = question.faceResponses[answerIndex];
+            // Play a random synth tone for a "meow"
+            synth.triggerAttackRelease("C4", "8n");
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            showNextQuestion();
+        }
+
+        // --- Rating Mode Functions ---
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageContainer = document.getElementById('image-container');
+                    imageContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded image" class="uploaded-image">`;
+                    
+                    setTimeout(rateImage, 1000);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function rateImage() {
+            const rating = Math.floor(Math.random() * 10) + 1;
+            const catEyes = document.getElementById('rate-eyes');
+            const catMouth = document.getElementById('rate-mouth');
+            const ratingResult = document.getElementById('rating-result');
+            
+            let expression, commentary;
+            
+            if (rating <= 3) {
+                expression = '😾';
+                commentary = `${rating}/10 - This offends my delicate feline sensibilities. Have you considered not taking pictures?`;
+            } else if (rating <= 5) {
+                expression = '😒';
+                commentary = `${rating}/10 - Meh. I've seen better things in my litter box.`;
+            } else if (rating <= 7) {
+                expression = '🙄';
+                commentary = `${rating}/10 - Not terrible, but needs more cats. Everything needs more cats.`;
+            } else if (rating <= 9) {
+                expression = '😸';
+                commentary = `${rating}/10 - Actually decent! Though it would be better if I were in it.`;
+            } else {
+                expression = '😻';
+                commentary = `${rating}/10 - PURRFECTION! This pleases the mighty Chonky Neko!`;
+            }
+            
+            catEyes.textContent = expression;
+            catMouth.textContent = '😽'; 
+            ratingResult.innerHTML = `<div style="font-size: 3em;">${expression}</div><div>${commentary}</div>`;
+            ratingResult.style.display = 'flex';
+        }
+        
+        // --- Horoscope Functions ---
+        function generateHoroscope() {
+            const now = new Date();
+            const timeIndex = (now.getHours() + now.getMinutes()) % catZodiacSigns.length;
+            const predictionIndex = (now.getSeconds() + now.getMilliseconds()) % horoscopePredictions.length;
+            
+            const zodiacSign = catZodiacSigns[timeIndex];
+            const prediction = horoscopePredictions[predictionIndex];
+            
+            document.getElementById('zodiac-sign').innerHTML = 
+                `${zodiacSign.emoji} ${zodiacSign.name} (${zodiacSign.element})`;
+            document.getElementById('horoscope-text').textContent = prediction;
+            document.getElementById('horoscope-result').style.display = 'block';
+            document.getElementById('horoscope-eyes').textContent = '🔮';
+            document.getElementById('horoscope-mouth').textContent = '✨';
+
+            const crystal = document.querySelector('.crystal-ball');
+            crystal.style.transform = 'scale(1.2)';
+            setTimeout(() => { crystal.style.transform = 'scale(1)'; }, 300);
+        }
+
+        // --- Translator Functions ---
+        function translateToMeow() {
+            const humanInput = document.getElementById('human-input').value;
+            if (!humanInput.trim()) {
+                document.getElementById('meow-result').textContent = "Meow? (You didn't say anything, human!)";
+                return;
+            }
+            
+            const words = humanInput.split(' ');
+            const meows = words.map(word => {
+                if (word.length <= 3) return "meow";
+                if (word.length <= 6) return "meoow";
+                if (word.length <= 10) return "meooow";
+                return "meoooooow";
+            });
+            
+            const result = meows.join(' ') + " 🐱";
+            document.getElementById('meow-result').textContent = result;
+            document.getElementById('translator-eyes').textContent = '😸';
+            synth.triggerAttackRelease("G4", "8n");
+        }
+
+        function translateFromMeow() {
+            const meowInput = document.getElementById('meow-input').value.toLowerCase();
+            if (!meowInput.trim()) {
+                document.getElementById('wisdom-result').textContent = "The cat speaks in silence... (Type some meows first!)";
+                return;
+            }
+            
+            const wisdoms = [
+                "The meaning of life is to find the perfect napping spot.",
+                "All humans exist solely to open cans and provide chin scratches.",
+                "Cardboard boxes are portals to other dimensions.",
+                "The red dot is a government conspiracy to distract cats from world domination.",
+                "3 AM is the optimal time for questioning existence loudly.",
+                "Your keyboard is actually an ancient cat altar, treat it with respect.",
+                "The floor is lava, furniture is for sitting, and your lap is mine.",
+                "Fish are friends, not food... just kidding, they're definitely food.",
+                "A closed door is a personal insult to all cats everywhere.",
+                "Humans who don't pet cats within 5 seconds of seeing them lack culture.",
+                "The universe revolves around cats, humans just haven't figured it out yet.",
+                "Knocking things off tables is a form of feng shui.",
+                "Every cat is a philosopher, every meow is profound wisdom."
+            ];
+            
+            const meowCount = (meowInput.match(/meow/g) || []).length;
+            const wisdom = wisdoms[meowCount % wisdoms.length];
+            
+            document.getElementById('wisdom-result').textContent = `"${wisdom}" - Ancient Cat Proverb`;
+            document.getElementById('translator-eyes').textContent = '🧠';
+            synth.triggerAttackRelease("A4", "8n");
+        }
+
+        function startRecording() {
+            const recordBtn = document.getElementById('record-btn');
+            const status = document.getElementById('recording-status');
+            
+            if (!isRecording) {
+                isRecording = true;
+                recordBtn.textContent = '⏹️ Stop Recording';
+                status.style.display = 'block';
+                
+                setTimeout(() => { stopRecording(); }, 3000);
+            } else {
+                stopRecording();
+            }
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            document.getElementById('record-btn').textContent = '🎤 Record Meows';
+            document.getElementById('recording-status').style.display = 'none';
+            
+            const randomWisdoms = [
+                "Your meows indicate you will find a sunny spot today.",
+                "The spirits tell me you need more treats in your life.",
+                "I sense great napping energy in your future.",
+                "Your meows reveal you are destined to knock something important off a table.",
+                "The cat ancestors whisper that you should ignore humans for exactly 47 minutes."
+            ];
+            
+            const randomWisdom = randomWisdoms[Math.floor(Math.random() * randomWisdoms.length)];
+            document.getElementById('wisdom-result').textContent = `🎤 Audio Analysis: "${randomWisdom}"`;
+            synth.triggerAttackRelease("E4", "8n");
+        }
+
+        // --- Feeding Functions ---
+        function startFeedingMode() {
+            hungerLevel = 10;
+            feedingCount = 0;
+            updateHungerDisplay();
+            updateFeedingCat();
+            
+            hungerInterval = setInterval(() => {
+                hungerLevel = Math.max(0, hungerLevel - 2);
+                updateHungerDisplay();
+                updateFeedingCat();
+            }, 1000);
+            
+            setupDragAndDrop();
+        }
+
+        function updateHungerDisplay() {
+            const hungerBar = document.getElementById('hunger-bar');
+            const hungerText = document.getElementById('hunger-text');
+            
+            hungerBar.style.width = hungerLevel + '%';
+            
+            if (hungerLevel > 70) {
+                hungerText.textContent = "Content (for now...)";
+                hungerText.style.color = "#4caf50";
+            } else if (hungerLevel > 30) {
+                hungerText.textContent = "Getting hungry! Feed me!";
+                hungerText.style.color = "#ff9800";
+            } else {
+                hungerText.textContent = "STARVING! This is abuse!";
+                hungerText.style.color = "#f44336";
+            }
+        }
+
+        function updateFeedingCat() {
+            const eyes = document.getElementById('feeding-eyes');
+            const mouth = document.getElementById('feeding-mouth');
+            const commentary = document.getElementById('feeding-commentary');
+            
+            if (hungerLevel > 70) {
+                eyes.textContent = '😊';
+                mouth.textContent = '😌';
+                commentary.textContent = '"This is acceptable... for now."';
+            } else if (hungerLevel > 30) {
+                eyes.textContent = '😐';
+                mouth.textContent = '😑';
+                commentary.textContent = '"I can feel myself wasting away! This is neglect!"';
+            } else {
+                eyes.textContent = '😿';
+                mouth.textContent = '😾';
+                commentary.textContent = '"I\'m calling the ASPCA! This is ABUSE!"';
+            }
+        }
+
+        function setupDragAndDrop() {
+            const foodBowl = document.getElementById('food-bowl');
+            const kibbleList = document.querySelectorAll('.kibble');
+
+            kibbleList.forEach(kibble => {
+                kibble.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', e.target.textContent);
+                    setTimeout(() => { e.target.style.opacity = '0.5'; }, 0);
+                });
+                kibble.addEventListener('dragend', (e) => {
+                    e.target.style.opacity = '1';
+                });
+            });
+            
+            foodBowl.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                foodBowl.style.transform = 'scale(1.1) translateX(-50%)';
+            });
+            
+            foodBowl.addEventListener('dragleave', () => {
+                foodBowl.style.transform = 'scale(1) translateX(-50%)';
+            });
+            
+            foodBowl.addEventListener('drop', (e) => {
+                e.preventDefault();
+                feedCat();
+                foodBowl.style.transform = 'scale(1) translateX(-50%)';
+            });
+        }
+
+        function feedCat() {
+            hungerLevel = Math.min(100, hungerLevel + 20);
+            feedingCount++;
+            
+            const commentary = document.getElementById('feeding-commentary');
+            const randomComment = sassyCommentary[Math.floor(Math.random() * sassyCommentary.length)];
+            commentary.textContent = `"${randomComment}"`;
+            
+            synth.triggerAttackRelease("D3", "16n"); // Play a "chomp" sound
+            updateHungerDisplay();
+            updateFeedingCat();
+            
+            if (feedingCount >= 10) {
+                makeCatMegaChonky();
+            }
+        }
+
+        function makeCatMegaChonky() {
+            const feedingCat = document.getElementById('feeding-cat');
+            const commentary = document.getElementById('feeding-commentary');
+            
+            feedingCat.classList.add('mega-chonky');
+            commentary.textContent = '"I AM THE ULTIMATE CHONK! WITNESS MY MAGNIFICENCE AS I ASCEND!"';
+            
+            if (hungerInterval) clearInterval(hungerInterval);
+            
+            setTimeout(() => {
+                feedingCat.classList.remove('mega-chonky');
+                feedingCount = 0;
+                hungerLevel = 10;
+                commentary.textContent = '"I have returned from the great beyond... and I\'m hungry again."';
+                updateHungerDisplay();
+                updateFeedingCat();
+                
+                hungerInterval = setInterval(() => {
+                    hungerLevel = Math.max(0, hungerLevel - 2);
+                    updateHungerDisplay();
+                    updateFeedingCat();
+                }, 1000);
+            }, 5000);
+        }
+
+        // Start the first mode on page load
+        window.onload = function() {
+            switchMode('chase');
+        };
+    </script>
+</body>
+</html>
+�
