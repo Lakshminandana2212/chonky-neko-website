@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chonky Neko - The Most Useless Cat Ever</title>
-    <!-- Importing a fun, round font for the website's theme -->
+    <title>Chonky Neko - The Most Useless Cat Ever (Revamped)</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Tone.js library for reliable browser-based audio -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         /* General styling and body layout */
@@ -174,17 +172,24 @@
             width: 100%;
             height: 100%;
             text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .sanyasi-mode, .rate-mode, .horoscope-mode, .translator-mode {
             padding: 40px;
             color: #333;
         }
-
-        /* Sanyasi cat with floating animation */
-        .sanyasi-cat {
-            margin: 0 auto 30px;
+        
+        /* The Sanyasi Cat only floats in the Sage Mode */
+        #sage-mode .sanyasi-cat {
             animation: float 3s ease-in-out infinite;
+        }
+        
+        .sanyasi-cat {
+            position: relative; /* Changed from absolute for static modes */
+            margin: 0 auto 30px;
         }
         
         .sanyasi-cat .cat-face { top: 40px; left: 30px; }
@@ -236,7 +241,7 @@
         .uploaded-image { max-width: 90%; max-height: 300px; border-radius: 15px; margin: 20px 0; }
 
         .rating-result {
-            font-size: 2em;
+            font-size: 1.5em;
             padding: 20px;
             background: rgba(255,255,255,0.8);
             border-radius: 15px;
@@ -245,6 +250,7 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            margin-top: 15px;
         }
 
         /* Paw-roscope styles */
@@ -280,7 +286,7 @@
         .horoscope-text { font-size: 1.3em; line-height: 1.6; }
 
         /* Translator styles */
-        .translator-section { background: rgba(255,255,255,0.8); padding: 20px; margin: 20px 0; border-radius: 15px; }
+        .translator-section { background: rgba(255,255,255,0.8); padding: 20px; margin: 10px 0; border-radius: 15px; width: 100%;}
 
         .translator-section textarea { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 1.1em; margin: 10px 0; resize: vertical; }
 
@@ -293,6 +299,7 @@
             border-radius: 10px;
             animation: pulse 1s infinite;
             display: none;
+            margin-top: 10px;
         }
 
         /* Feeding simulator styles */
@@ -367,6 +374,11 @@
             z-index: 20;
         }
 
+        /* --- FIXED: Class to apply the ascension animation --- */
+        .mega-chonky {
+            animation: expandAndFloat 5s ease-out forwards;
+        }
+
         /* Keyframe animations */
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
@@ -385,8 +397,8 @@
         }
 
         @keyframes sparkle {
-            0%, 100% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.2); }
+            0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.8; }
+            50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
         }
 
         @keyframes hungerPulse {
@@ -425,7 +437,6 @@
     </div>
 
     <div class="content-container">
-        <!-- Chase Mode -->
         <div id="chase-mode" class="mode-content game-area">
             <div class="instructions">Click anywhere to move the mouse! Chonky will chase it!</div>
             <div class="score">Score: <span id="score">0</span></div>
@@ -438,7 +449,6 @@
             <div class="mouse" id="mouse">🐭</div>
         </div>
 
-        <!-- Sage Mode -->
         <div id="sage-mode" class="mode-content sanyasi-mode">
             <div class="sanyasi-cat" id="sanyasi-cat">
                 <div class="cat-face">
@@ -454,7 +464,6 @@
             </div>
         </div>
 
-        <!-- Rating Mode -->
         <div id="rate-mode" class="mode-content rate-mode">
             <div class="sanyasi-cat">
                 <div class="cat-face">
@@ -472,7 +481,6 @@
             <div class="rating-result" id="rating-result"></div>
         </div>
 
-        <!-- Horoscope Mode -->
         <div id="horoscope-mode" class="mode-content horoscope-mode">
             <div class="sanyasi-cat">
                 <div class="cat-face">
@@ -492,7 +500,6 @@
             </div>
         </div>
 
-        <!-- Translator Mode -->
         <div id="translator-mode" class="mode-content translator-mode">
             <div class="sanyasi-cat">
                 <div class="cat-face">
@@ -508,16 +515,16 @@
                 <div class="translation-result" id="meow-result"></div>
             </div>
             <div class="translator-section">
-                <h3>Cat to Human (Advanced AI)</h3>
+                <h3>Cat to Human (Advanced AI*)</h3>
                 <textarea id="meow-input" placeholder="Type your meows here (meow meow meoooow)..." rows="3"></textarea>
                 <button class="option-btn" onclick="translateFromMeow()">Decode Cat Wisdom</button>
                 <button class="option-btn" onclick="startRecording()" id="record-btn">🎤 Record Meows</button>
                 <div class="translation-result" id="wisdom-result"></div>
                 <div id="recording-status">Recording... Say your meows!</div>
+                 <p style="font-size: 0.8em; color: #888; margin-top: 10px;">*Advanced AI is a simulation. No cats (or microphones) were used in this translation.</p>
             </div>
         </div>
 
-        <!-- Feeding Mode -->
         <div id="feeding-mode" class="mode-content game-area">
             <div class="hunger-meter">
                 <div class="hunger-label">Chonky's Hunger Level</div>
@@ -545,12 +552,10 @@
             </div>
         </div>
     </div>
-    
-    <!-- Audio elements are now removed to prevent errors -->
 
     <script>
         // Global variables for game state
-        let currentMode = 'chase';
+        let currentMode = '';
         let score = 0;
         let catPosition = { x: 100, y: 100 };
         let mousePosition = { x: 400, y: 200 };
@@ -560,6 +565,7 @@
         let hungerInterval;
         let feedingCount = 0;
         let isRecording = false;
+        let audioStarted = false; // To handle browser audio policy
 
         // Create a simple synth instance using Tone.js
         const synth = new Tone.Synth().toDestination();
@@ -597,26 +603,13 @@
             "You will discover that all boxes are actually cat traps.",
             "Your lap will become property of the local cat government."
         ];
-
-        const sassyCommentary = [
-            "Finally! I was about to file a complaint with the Cat Rights Commission!",
-            "This is acceptable... for now. But I'll be watching you.",
-            "Too slow, human! My ancestors are disappointed.",
-            "Perfect! You may continue existing in my presence.",
-            "Adequate. You're learning the sacred art of cat servitude.",
-            "I suppose this will do. Don't let it go to your head.",
-            "Hmph. I've had better service at the animal shelter.",
-            "Excellent! You show promise as a future cat butler.",
-            "This pleases me. You may receive one (1) purr as payment.",
-            "Not bad! Though you could use more enthusiasm."
-        ];
-
+        
         const sageQuestions = [
             {
                 question: "Human, why do you disturb my meditation to ask me things?",
                 options: ["Because I'm bored", "I seek wisdom", "You're cute", "I don't know"],
                 responses: ["Ah yes, boredom. The eternal human condition. 😾", "Wisdom? From a cat? How presumptuous! 😸", "Flattery will get you... actually, continue. 😻", "Honesty! I respect that, foolish human. 🙄"],
-                faceResponses: ['😾', '😹', '😻', '�']
+                faceResponses: ['😾', '😹', '😻', '🙄'] // FIXED broken emoji
             },
             {
                 question: "If a cat knocks something off a table and no human sees it, did it really happen?",
@@ -635,23 +628,24 @@
                 options: ["To be happy", "To catch mice", "To nap and eat", "To knock things over"],
                 responses: ["Too simple! Life is about judging humans silently. 😒", "Amateur! Any cat can catch mice. True art is ignoring them. 🎨", "Basic cat wisdom! You're learning, grasshopper. 🌱", "ENLIGHTENMENT! You understand the sacred art of chaos! 🌟"],
                 faceResponses: ['😒', '🎨', '😸', '✨']
-            },
-            {
-                question: "Why do cats purr?",
-                options: ["They're happy", "It's healing", "To manipulate humans", "Nobody knows"],
-                responses: ["Happiness is for dogs. We purr to charge our laser eyes. ⚡", "Healing? Yes, we heal our own superiority complex. 💊", "CORRECT! Purring is our mind control device! 🧠", "Finally! The mystery must remain to preserve our power! 🔮"],
-                faceResponses: ['⚡', '💊', '🧠', '🔮']
             }
         ];
 
         // Function to switch between the different modes
         function switchMode(mode) {
+            // FIX: Ensure audio context is started on first user interaction
+            if (!audioStarted) {
+                Tone.start();
+                audioStarted = true;
+                console.log('Audio context started.');
+            }
+            
+            // Stop any ongoing processes from the current mode
+            if (currentMode === 'chase' && chaseInterval) clearInterval(chaseInterval);
+            if (currentMode === 'feeding' && hungerInterval) clearInterval(hungerInterval);
+            
             // Hide all content sections first
             document.querySelectorAll('.mode-content').forEach(el => el.style.display = 'none');
-            
-            // Clear any running intervals from previous modes
-            if (chaseInterval) clearInterval(chaseInterval);
-            if (hungerInterval) clearInterval(hungerInterval);
             
             // Show the selected mode and start its unique functions
             const modeElement = document.getElementById(mode + '-mode');
@@ -660,8 +654,14 @@
                 if (mode === 'chase') startChaseMode();
                 else if (mode === 'sage') resetSageMode();
                 else if (mode === 'feeding') startFeedingMode();
+                // Reset other modes to their initial state if needed
+                else if (mode === 'rate') {
+                     document.getElementById('image-container').innerHTML = '';
+                     document.getElementById('rating-result').style.display = 'none';
+                } else if (mode === 'horoscope') {
+                     document.getElementById('horoscope-result').style.display = 'none';
+                }
             }
-            
             currentMode = mode;
         }
 
@@ -671,18 +671,20 @@
             score = 0;
             document.getElementById('score').textContent = score;
             catPosition = { x: 100, y: 100 };
-            mousePosition = { x: 400, y: 200 };
+            mousePosition = { x: gameArea.clientWidth / 2, y: gameArea.clientHeight / 2 };
             updateCatPosition();
             updateMousePosition();
 
             gameArea.onclick = function(e) {
                 const rect = gameArea.getBoundingClientRect();
-                mousePosition.x = e.clientX - rect.left - 15;
-                mousePosition.y = e.clientY - rect.top - 15;
+                mousePosition.x = e.clientX - rect.left - 15; // mouse emoji offset
+                mousePosition.y = e.clientY - rect.top - 15; // mouse emoji offset
                 updateMousePosition();
                 
-                if (chaseInterval) clearInterval(chaseInterval);
-                chaseInterval = setInterval(chaseMouse, 50);
+                // Only start a new chase interval if one isn't already running
+                if (!chaseInterval) {
+                   chaseInterval = setInterval(chaseMouse, 50);
+                }
             };
         }
 
@@ -714,6 +716,7 @@
                 document.getElementById('score').textContent = score;
                 catMouth.textContent = '😋';
                 catEyes.textContent = '😸';
+                synth.triggerAttackRelease("C5", "16n");
                 
                 // Move mouse to a new random position
                 const gameArea = document.getElementById('chase-mode');
@@ -722,6 +725,7 @@
                 updateMousePosition();
                 
                 clearInterval(chaseInterval);
+                chaseInterval = null; // Reset interval variable
                 setTimeout(() => {
                     catEyes.textContent = '👀';
                     catMouth.textContent = '😼';
@@ -737,7 +741,7 @@
         // --- Sage Mode Functions ---
         function resetSageMode() {
             currentQuestion = 0;
-            document.getElementById('question-display').textContent = "Welcome, human. I am Chonky Neko, the wise cat sanyasi. I shall ask you the most profound questions known to catkind...";
+            document.getElementById('question-display').innerHTML = "Welcome, human. I am Chonky Neko, the wise cat sanyasi. I shall ask you the most profound questions known to catkind...";
             document.getElementById('sage-options').innerHTML = '<button class="option-btn" onclick="startSageMode()">Begin the wisdom!</button>';
             document.getElementById('sage-eyes').textContent = '😼';
             document.getElementById('sage-mouth').textContent = '😾';
@@ -774,9 +778,8 @@
             
             document.getElementById('question-display').textContent = response;
             document.getElementById('sage-options').innerHTML = '<button class="option-btn" onclick="nextQuestion()">Next profound question!</button>';
-            
             document.getElementById('sage-eyes').textContent = question.faceResponses[answerIndex];
-            // Play a random synth tone for a "meow"
+            
             synth.triggerAttackRelease("C4", "8n");
         }
 
@@ -793,7 +796,7 @@
                 reader.onload = function(e) {
                     const imageContainer = document.getElementById('image-container');
                     imageContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded image" class="uploaded-image">`;
-                    
+                    document.getElementById('rating-result').style.display = 'none'; // Hide old result
                     setTimeout(rateImage, 1000);
                 };
                 reader.readAsDataURL(file);
@@ -803,49 +806,33 @@
         function rateImage() {
             const rating = Math.floor(Math.random() * 10) + 1;
             const catEyes = document.getElementById('rate-eyes');
-            const catMouth = document.getElementById('rate-mouth');
             const ratingResult = document.getElementById('rating-result');
             
             let expression, commentary;
             
-            if (rating <= 3) {
-                expression = '😾';
-                commentary = `${rating}/10 - This offends my delicate feline sensibilities. Have you considered not taking pictures?`;
-            } else if (rating <= 5) {
-                expression = '😒';
-                commentary = `${rating}/10 - Meh. I've seen better things in my litter box.`;
-            } else if (rating <= 7) {
-                expression = '🙄';
-                commentary = `${rating}/10 - Not terrible, but needs more cats. Everything needs more cats.`;
-            } else if (rating <= 9) {
-                expression = '😸';
-                commentary = `${rating}/10 - Actually decent! Though it would be better if I were in it.`;
-            } else {
-                expression = '😻';
-                commentary = `${rating}/10 - PURRFECTION! This pleases the mighty Chonky Neko!`;
-            }
+            if (rating <= 3) { expression = '😾'; commentary = `${rating}/10 - This offends my delicate feline sensibilities.`; } 
+            else if (rating <= 5) { expression = '😒'; commentary = `${rating}/10 - Meh. I've seen better things in my litter box.`; } 
+            else if (rating <= 7) { expression = '🙄'; commentary = `${rating}/10 - Not terrible, but needs more cats.`; } 
+            else if (rating <= 9) { expression = '😸'; commentary = `${rating}/10 - Actually decent! Though it would be better if I were in it.`; } 
+            else { expression = '😻'; commentary = `${rating}/10 - PURRFECTION! This pleases the mighty Chonky Neko!`; }
             
             catEyes.textContent = expression;
-            catMouth.textContent = '😽'; 
             ratingResult.innerHTML = `<div style="font-size: 3em;">${expression}</div><div>${commentary}</div>`;
             ratingResult.style.display = 'flex';
         }
         
         // --- Horoscope Functions ---
         function generateHoroscope() {
-            const now = new Date();
-            const timeIndex = (now.getHours() + now.getMinutes()) % catZodiacSigns.length;
-            const predictionIndex = (now.getSeconds() + now.getMilliseconds()) % horoscopePredictions.length;
+            const zodiacSign = catZodiacSigns[Math.floor(Math.random() * catZodiacSigns.length)];
+            const prediction = horoscopePredictions[Math.floor(Math.random() * horoscopePredictions.length)];
             
-            const zodiacSign = catZodiacSigns[timeIndex];
-            const prediction = horoscopePredictions[predictionIndex];
-            
-            document.getElementById('zodiac-sign').innerHTML = 
-                `${zodiacSign.emoji} ${zodiacSign.name} (${zodiacSign.element})`;
+            document.getElementById('zodiac-sign').innerHTML = `${zodiacSign.emoji} ${zodiacSign.name} (${zodiacSign.element})`;
             document.getElementById('horoscope-text').textContent = prediction;
             document.getElementById('horoscope-result').style.display = 'block';
             document.getElementById('horoscope-eyes').textContent = '🔮';
             document.getElementById('horoscope-mouth').textContent = '✨';
+            
+            synth.triggerAttackRelease("G5", "2n");
 
             const crystal = document.querySelector('.crystal-ball');
             crystal.style.transform = 'scale(1.2)';
@@ -854,73 +841,31 @@
 
         // --- Translator Functions ---
         function translateToMeow() {
-            const humanInput = document.getElementById('human-input').value;
-            if (!humanInput.trim()) {
-                document.getElementById('meow-result').textContent = "Meow? (You didn't say anything, human!)";
-                return;
-            }
-            
-            const words = humanInput.split(' ');
-            const meows = words.map(word => {
-                if (word.length <= 3) return "meow";
-                if (word.length <= 6) return "meoow";
-                if (word.length <= 10) return "meooow";
-                return "meoooooow";
-            });
-            
-            const result = meows.join(' ') + " 🐱";
-            document.getElementById('meow-result').textContent = result;
-            document.getElementById('translator-eyes').textContent = '😸';
-            synth.triggerAttackRelease("G4", "8n");
+            // ... (rest of translator functions) ...
         }
 
         function translateFromMeow() {
-            const meowInput = document.getElementById('meow-input').value.toLowerCase();
-            if (!meowInput.trim()) {
-                document.getElementById('wisdom-result').textContent = "The cat speaks in silence... (Type some meows first!)";
-                return;
-            }
-            
-            const wisdoms = [
-                "The meaning of life is to find the perfect napping spot.",
-                "All humans exist solely to open cans and provide chin scratches.",
-                "Cardboard boxes are portals to other dimensions.",
-                "The red dot is a government conspiracy to distract cats from world domination.",
-                "3 AM is the optimal time for questioning existence loudly.",
-                "Your keyboard is actually an ancient cat altar, treat it with respect.",
-                "The floor is lava, furniture is for sitting, and your lap is mine.",
-                "Fish are friends, not food... just kidding, they're definitely food.",
-                "A closed door is a personal insult to all cats everywhere.",
-                "Humans who don't pet cats within 5 seconds of seeing them lack culture.",
-                "The universe revolves around cats, humans just haven't figured it out yet.",
-                "Knocking things off tables is a form of feng shui.",
-                "Every cat is a philosopher, every meow is profound wisdom."
-            ];
-            
-            const meowCount = (meowInput.match(/meow/g) || []).length;
-            const wisdom = wisdoms[meowCount % wisdoms.length];
-            
-            document.getElementById('wisdom-result').textContent = `"${wisdom}" - Ancient Cat Proverb`;
-            document.getElementById('translator-eyes').textContent = '🧠';
-            synth.triggerAttackRelease("A4", "8n");
+            // ... (rest of translator functions) ...
         }
 
         function startRecording() {
-            const recordBtn = document.getElementById('record-btn');
-            const status = document.getElementById('recording-status');
-            
-            if (!isRecording) {
-                isRecording = true;
-                recordBtn.textContent = '⏹️ Stop Recording';
-                status.style.display = 'block';
-                
-                setTimeout(() => { stopRecording(); }, 3000);
-            } else {
-                stopRecording();
-            }
+             const recordBtn = document.getElementById('record-btn');
+             const status = document.getElementById('recording-status');
+             
+             if (isRecording) {
+                 stopRecording();
+                 return;
+             }
+             isRecording = true;
+             recordBtn.textContent = '⏹️ Stop Recording';
+             status.style.display = 'block';
+             
+             // Simulate a 3-second recording
+             setTimeout(() => { stopRecording(); }, 3000);
         }
 
         function stopRecording() {
+            if (!isRecording) return;
             isRecording = false;
             document.getElementById('record-btn').textContent = '🎤 Record Meows';
             document.getElementById('recording-status').style.display = 'none';
@@ -937,7 +882,7 @@
             document.getElementById('wisdom-result').textContent = `🎤 Audio Analysis: "${randomWisdom}"`;
             synth.triggerAttackRelease("E4", "8n");
         }
-
+        
         // --- Feeding Functions ---
         function startFeedingMode() {
             hungerLevel = 10;
@@ -957,19 +902,11 @@
         function updateHungerDisplay() {
             const hungerBar = document.getElementById('hunger-bar');
             const hungerText = document.getElementById('hunger-text');
-            
             hungerBar.style.width = hungerLevel + '%';
             
-            if (hungerLevel > 70) {
-                hungerText.textContent = "Content (for now...)";
-                hungerText.style.color = "#4caf50";
-            } else if (hungerLevel > 30) {
-                hungerText.textContent = "Getting hungry! Feed me!";
-                hungerText.style.color = "#ff9800";
-            } else {
-                hungerText.textContent = "STARVING! This is abuse!";
-                hungerText.style.color = "#f44336";
-            }
+            if (hungerLevel > 70) { hungerText.textContent = "Content (for now...)"; hungerText.style.color = "#4caf50"; } 
+            else if (hungerLevel > 30) { hungerText.textContent = "Getting hungry! Feed me!"; hungerText.style.color = "#ff9800"; } 
+            else { hungerText.textContent = "STARVING! This is abuse!"; hungerText.style.color = "#f44336"; }
         }
 
         function updateFeedingCat() {
@@ -977,19 +914,9 @@
             const mouth = document.getElementById('feeding-mouth');
             const commentary = document.getElementById('feeding-commentary');
             
-            if (hungerLevel > 70) {
-                eyes.textContent = '😊';
-                mouth.textContent = '😌';
-                commentary.textContent = '"This is acceptable... for now."';
-            } else if (hungerLevel > 30) {
-                eyes.textContent = '😐';
-                mouth.textContent = '😑';
-                commentary.textContent = '"I can feel myself wasting away! This is neglect!"';
-            } else {
-                eyes.textContent = '😿';
-                mouth.textContent = '😾';
-                commentary.textContent = '"I\'m calling the ASPCA! This is ABUSE!"';
-            }
+            if (hungerLevel > 70) { eyes.textContent = '😊'; mouth.textContent = '😌'; commentary.textContent = '"This is acceptable... for now."'; } 
+            else if (hungerLevel > 30) { eyes.textContent = '😐'; mouth.textContent = '😑'; commentary.textContent = '"I can feel myself wasting away! This is neglect!"'; } 
+            else { eyes.textContent = '😿'; mouth.textContent = '😾'; commentary.textContent = '"I\'m calling the ASPCA! This is ABUSE!"'; }
         }
 
         function setupDragAndDrop() {
@@ -998,37 +925,20 @@
 
             kibbleList.forEach(kibble => {
                 kibble.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', e.target.textContent);
+                    e.dataTransfer.setData('text/plain', 'kibble');
                     setTimeout(() => { e.target.style.opacity = '0.5'; }, 0);
                 });
-                kibble.addEventListener('dragend', (e) => {
-                    e.target.style.opacity = '1';
-                });
+                kibble.addEventListener('dragend', (e) => { e.target.style.opacity = '1'; });
             });
             
-            foodBowl.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                foodBowl.style.transform = 'scale(1.1) translateX(-50%)';
-            });
-            
-            foodBowl.addEventListener('dragleave', () => {
-                foodBowl.style.transform = 'scale(1) translateX(-50%)';
-            });
-            
-            foodBowl.addEventListener('drop', (e) => {
-                e.preventDefault();
-                feedCat();
-                foodBowl.style.transform = 'scale(1) translateX(-50%)';
-            });
+            foodBowl.addEventListener('dragover', (e) => { e.preventDefault(); foodBowl.style.transform = 'translateX(-50%) scale(1.1)'; });
+            foodBowl.addEventListener('dragleave', () => { foodBowl.style.transform = 'translateX(-50%) scale(1)'; });
+            foodBowl.addEventListener('drop', (e) => { e.preventDefault(); feedCat(); foodBowl.style.transform = 'translateX(-50%) scale(1)'; });
         }
 
         function feedCat() {
             hungerLevel = Math.min(100, hungerLevel + 20);
             feedingCount++;
-            
-            const commentary = document.getElementById('feeding-commentary');
-            const randomComment = sassyCommentary[Math.floor(Math.random() * sassyCommentary.length)];
-            commentary.textContent = `"${randomComment}"`;
             
             synth.triggerAttackRelease("D3", "16n"); // Play a "chomp" sound
             updateHungerDisplay();
@@ -1043,11 +953,13 @@
             const feedingCat = document.getElementById('feeding-cat');
             const commentary = document.getElementById('feeding-commentary');
             
+            // FIX: Add the class that triggers the animation
             feedingCat.classList.add('mega-chonky');
             commentary.textContent = '"I AM THE ULTIMATE CHONK! WITNESS MY MAGNIFICENCE AS I ASCEND!"';
             
             if (hungerInterval) clearInterval(hungerInterval);
             
+            // Reset after the animation
             setTimeout(() => {
                 feedingCat.classList.remove('mega-chonky');
                 feedingCount = 0;
@@ -1056,19 +968,63 @@
                 updateHungerDisplay();
                 updateFeedingCat();
                 
+                // Restart the hunger decay
                 hungerInterval = setInterval(() => {
                     hungerLevel = Math.max(0, hungerLevel - 2);
                     updateHungerDisplay();
                     updateFeedingCat();
                 }, 1000);
-            }, 5000);
+            }, 5000); // Must match animation duration
         }
 
-        // Start the first mode on page load
+        // --- Initialize the page ---
         window.onload = function() {
             switchMode('chase');
         };
+        
+        // --- Full Translator Functions (Placed here for organization) ---
+        function translateToMeow() {
+             const humanInput = document.getElementById('human-input').value;
+             if (!humanInput.trim()) {
+                 document.getElementById('meow-result').textContent = "Meow? (You didn't say anything, human!)";
+                 return;
+             }
+             const words = humanInput.split(' ');
+             const meows = words.map(word => {
+                 if (word.length <= 3) return "meow";
+                 if (word.length <= 6) return "meoow";
+                 if (word.length <= 10) return "meooow";
+                 return "meoooooow";
+             });
+             document.getElementById('meow-result').textContent = meows.join(' ') + " 🐱";
+             document.getElementById('translator-eyes').textContent = '😸';
+             synth.triggerAttackRelease("G4", "8n");
+         }
+
+         function translateFromMeow() {
+             const meowInput = document.getElementById('meow-input').value.toLowerCase();
+             if (!meowInput.trim()) {
+                 document.getElementById('wisdom-result').textContent = "The cat speaks in silence... (Type some meows first!)";
+                 return;
+             }
+             const wisdoms = [
+                 "The meaning of life is to find the perfect napping spot.",
+                 "All humans exist solely to open cans and provide chin scratches.",
+                 "Cardboard boxes are portals to other dimensions.",
+                 "The red dot is a government conspiracy to distract cats from world domination.",
+                 "3 AM is the optimal time for questioning existence loudly.",
+                 "Your keyboard is actually an ancient cat altar, treat it with respect.",
+                 "The floor is lava, furniture is for sitting, and your lap is mine.",
+                 "A closed door is a personal insult to all cats everywhere.",
+                 "Knocking things off tables is a form of feng shui."
+             ];
+             const meowCount = (meowInput.match(/meow/g) || []).length;
+             const wisdom = wisdoms[meowCount % wisdoms.length];
+             document.getElementById('wisdom-result').textContent = `"${wisdom}" - Ancient Cat Proverb`;
+             document.getElementById('translator-eyes').textContent = '🧠';
+             synth.triggerAttackRelease("A4", "8n");
+         }
+
     </script>
 </body>
 </html>
-�
