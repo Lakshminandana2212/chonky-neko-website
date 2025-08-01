@@ -3,36 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chonky Neko</title>
+    <title>Chonky Neko - The Ultimate Useless Cat Experience</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>chonky neko</h1>
-        <p>the most useless cat on the internet</p>
-    </header>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">🐱 CHONKY NEKO 🐱</h1>
+        </header>
 
-    <nav id="mode-selector">
-        <button data-mode="chase">Chase Mode</button>
-        <button data-mode="sanyasi">Sanyasi Mode</button>
-        <button data-mode="rater">Rate Meow-fit</button>
-        <button data-mode="horoscope">Paw-roscope</button>
-        <button data-mode="translator">Meow-lator</button>
-        <button data-mode="feed">Feed Chonky</button>
-    </nav>
+        <nav class="mode-selector">
+            <button class="mode-btn" data-mode="chase">🏃‍♂️ Cat & Mouse Chase</button>
+            <button class="mode-btn" data-mode="chatbot">🧘‍♀️ Cat Sanyasi</button>
+            <button class="mode-btn" data-mode="rating">📸 Picture Rating</button>
+            <button class="mode-btn" data-mode="horoscope">🔮 Paw-roscope</button>
+            <button class="mode-btn" data-mode="translator">🗣️ Cat Translator</button>
+            <button class="mode-btn" data-mode="feeding">🍽️ Feed Chonky</button>
+        </nav>
 
-    <main id="app-container">
-        <div class="mode" id="chase-mode">
-            <img src="assets/images/cat-chaser.png" id="cat-chaser">
-        </div>
-        
-        <div class="mode" id="sanyasi-mode"></div>
-        <div class="mode" id="rater-mode"></div>
-        <div class="mode" id="horoscope-mode"></div>
-        <div class="mode" id="translator-mode"></div>
-        <div class="mode" id="feed-mode"></div>
-    </main>
+        <main class="game-area" id="gameArea">
+             <div id="chaseMode" class="game-mode-container">
+                <div class="game-instructions">Move your cursor around... try to get away!</div>
+                <div class="cursor-mouse" id="cursorMouse"></div>
+                <div class="cat" id="chaseCat">
+                    <div class="cat-face">
+                        <div class="cat-eyes" id="catEyes">👀</div>
+                        <div class="cat-mouth" id="catMouth">😸</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chatbotMode" class="game-mode-container hidden">
+                <h3>🧘‍♀️ Ask the Wise Cat Sanyasi</h3>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-options" id="chatOptions"></div>
+            </div>
+
+            <div id="ratingMode" class="game-mode-container hidden">
+                <h3>📸 Let Chonky Rate Your Picture!</h3>
+                <div class="upload-zone" id="uploadZone">
+                    <p>📷 Click here to upload your picture!</p>
+                    <p>Chonky will judge it with the wisdom of a thousand naps.</p>
+                </div>
+                <input type="file" id="imageInput" accept="image/*" class="hidden">
+                <div class="rating-display" id="ratingResult"></div>
+            </div>
+
+            <div id="horoscopeMode" class="game-mode-container hidden">
+                <h3>🔮 Your Paw-roscope Awaits!</h3>
+                <p>Choose your Cat Zodiac Sign:</p>
+                <div class="zodiac-circle">
+                    <div class="zodiac-sign" data-sign="tuna">🐟</div>
+                    <div class="zodiac-sign" data-sign="box">📦</div>
+                    <div class="zodiac-sign" data-sign="laser">🔴</div>
+                    <div class="zodiac-sign" data-sign="yarn">🧶</div>
+                    <div class="zodiac-sign" data-sign="catnip">🌿</div>
+                    <div class="zodiac-sign" data-sign="windowsill">🪟</div>
+                </div>
+                <div id="horoscopeResult"></div>
+            </div>
+
+            <div id="translatorMode" class="game-mode-container hidden">
+                <h3>🗣️ Cat Translator Supreme</h3>
+                <textarea class="translator-input" id="translatorInput" placeholder="Type your human words here..."></textarea>
+                <button class="translate-btn" id="translateToCatBtn">Translate to Cat</button>
+                <div class="translation-result" id="translationResult">Translation will appear here...</div>
+            </div>
+
+            <div id="feedingMode" class="game-mode-container hidden">
+                <h3>🍽️ Feed the Chonky Beast!</h3>
+                <div class="dramatic-text" id="dramaticText"></div>
+                <div class="chonky-cat" id="chonkyCat">😸</div>
+                <p>Click Chonky to feed him!</p>
+                <div class="hunger-meter">
+                    <div class="hunger-fill" id="hungerFill"></div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script src="script.js"></script>
 </body>
